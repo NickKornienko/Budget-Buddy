@@ -33,28 +33,29 @@ from .models import get_user_email
 
 url_signer = URLSigner(session)
 
+
 @action('index')
 @action.uses('index.html', db, auth, url_signer)
 def index():
     return dict(
         # COMPLETE: return here any signed URLs you need.
-        my_callback_url = URL('my_callback', signer=url_signer),
+        my_callback_url=URL('my_callback', signer=url_signer),
     )
+
 
 @action('create')
 @action.uses('create.html', db, auth, url_signer)
 def create():
     return dict(
-        x = "create"
         # COMPLETE: return here any signed URLs you need.
-        my_callback_url = URL('my_callback', signer=url_signer),
+        my_callback_url=URL('my_callback', signer=url_signer),
     )
+
 
 @action('display')
 @action.uses('display.html', db, auth, url_signer)
 def display():
     return dict(
-        x = "create"
         # COMPLETE: return here any signed URLs you need.
-        my_callback_url = URL('my_callback', signer=url_signer),
+        my_callback_url=URL('my_callback', signer=url_signer),
     )
