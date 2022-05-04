@@ -8,7 +8,32 @@
 
 
 <div class="section" id="vue-target" v-cloak>
-  display
+
+  <a class="button is-success" href="[[=URL('create')]]">
+    <span class="icon"><i class="fa fa-plus"></i></span>
+    <span>Create new budget</span>
+  </a>
+
+  <table class="table is-striped is-fullwidth">
+    <tr>
+       <th>Budget name</th>
+    </tr>
+    [[for row in rows:]]
+    <tr>
+       <td>[[=row.budget_name]]</td>
+       <td>
+          <a class="button" href="[[=URL('edit', row.id)]]">
+             <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Edit</span>
+          </a>
+       </td>
+       <td>
+          <a class="button" href="[[=URL('del', row.id)]]">
+             <span class="icon"><i class="fa fa-fw fa-trash"></i></span>
+          </a>
+       </td>
+    </tr>
+    [[pass]]
+ </table>
 </div>
 
 
