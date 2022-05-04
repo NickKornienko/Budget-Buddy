@@ -65,6 +65,14 @@ def create():
 @action.uses('display.html', db, auth, url_signer)
 def display():
     return dict(
-        # COMPLETE: return here any signed URLs you need.
         my_callback_url=URL('my_callback', signer=url_signer),
+        rows=db(db.budgets.user_id == get_user_email()).select()
     )
+
+
+@action('del/<budget_id:int>')
+@action.uses(db, auth.user, session, url_signer)
+def inc(budget_id=None):
+    assert budget_id is not None
+    db(db.budgets.id == budget_id).delete()
+    redirect(URL('display'))
