@@ -30,6 +30,7 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
+from py4web.utils.form import Form, FormStyleBulma
 
 url_signer = URLSigner(session)
 
@@ -37,17 +38,25 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth, url_signer)
 def index():
+    rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
         # COMPLETE: return here any signed URLs you need.
         my_callback_url=URL('my_callback', signer=url_signer),
+        rows=rows, url_signer=url_signer,
     )
 
 
 @action('create')
 @action.uses('create.html', db, auth, url_signer)
 def create():
+   # Insert form: no record= in it.
+    form = Form(db.budgets, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        # We simply redirect; the insertion already happened.
+        redirect(URL('index'))
+    # Either this is a GET request, or this is a POST but not accepted = with errors.
     return dict(
-        # COMPLETE: return here any signed URLs you need.
+        form=form,
         my_callback_url=URL('my_callback', signer=url_signer),
     )
 
