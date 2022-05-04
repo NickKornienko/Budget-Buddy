@@ -38,6 +38,10 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth, url_signer)
 def index():
+    # Redirects to login page after checking for logged in user.
+    if get_user_email() is None:
+        redirect(URL('login'))
+
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
         # COMPLETE: return here any signed URLs you need.
@@ -49,6 +53,9 @@ def index():
 @action('create')
 @action.uses('create.html', db, auth, url_signer)
 def create():
+    # Redirects to login page after checking for logged in user.
+    if get_user_email() is None:
+        redirect(URL('login'))
    # Insert form: no record= in it.
     form = Form(db.budgets, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
@@ -64,6 +71,7 @@ def create():
 @action('display')
 @action.uses('display.html', db, auth, url_signer)
 def index():
+    # Redirects to login page after checking for logged in user.
     if get_user_email() is None:
         redirect(URL('login'))
 
