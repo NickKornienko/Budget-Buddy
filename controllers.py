@@ -37,25 +37,27 @@ url_signer = URLSigner(session)
 @action('index')
 @action.uses('index.html', db, auth, url_signer)
 def index():
-    return dict(
-        # COMPLETE: return here any signed URLs you need.
-        my_callback_url=URL('my_callback', signer=url_signer),
-    )
-
+    if get_user_email() is None:
+        redirect(URL('login'))
 
 @action('create')
 @action.uses('create.html', db, auth, url_signer)
-def create():
-    return dict(
-        # COMPLETE: return here any signed URLs you need.
-        my_callback_url=URL('my_callback', signer=url_signer),
-    )
+def index():
+    if get_user_email() is None:
+        redirect(URL('login'))
+
 
 
 @action('display')
 @action.uses('display.html', db, auth, url_signer)
-def display():
-    return dict(
-        # COMPLETE: return here any signed URLs you need.
-        my_callback_url=URL('my_callback', signer=url_signer),
-    )
+def index():
+    if get_user_email() is None:
+        redirect(URL('login'))
+
+
+
+@action('login')
+@action.uses('login.html', db, auth, url_signer)
+def login():
+    return dict()
+
