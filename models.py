@@ -2,6 +2,7 @@
 This file defines the database models
 """
 
+from cmath import inf
 import datetime
 from .common import db, Field, auth
 from pydal.validators import *
@@ -17,27 +18,10 @@ def get_time():
 
 db.define_table(
     'budgets',
-    Field('budget_name', requires=IS_NOT_EMPTY()),
-
-    Field('work', 'float', default=0,
-          requires=IS_FLOAT_IN_RANGE(0, 1e6)),
-
-    Field('investments', 'float', default=0,
-          requires=IS_FLOAT_IN_RANGE(0, 1e6)),
-
-    Field('other_income', 'float', default=0,
-          requires=IS_FLOAT_IN_RANGE(0, 1e6)),
-    Field('rent', 'float', default=0,
-
-          requires=IS_FLOAT_IN_RANGE(0, 1e6)),
-    Field('hobbies', 'float', default=0,
-          requires=IS_FLOAT_IN_RANGE(0, 1e6)),
-
-    Field('other_expenses', 'float', default=0,
-          requires=IS_FLOAT_IN_RANGE(0, 1e6)),
-
+    Field('name', requires=IS_NOT_EMPTY()),
     Field('user_id', default=get_user_email),
-
+    Field('expenses', 'integer', requires=IS_INT_IN_RANGE(0, 1e6)),
+    Field('income', 'integer', requires=IS_INT_IN_RANGE(0, 1e6)),
     Field('creation_date', 'datetime', default=get_time),
 )
 
@@ -45,5 +29,17 @@ db.budgets.id.readable = db.budgets.id.writable = False
 db.budgets.user_id.readable = db.budgets.user_id.writable = False
 db.budgets.creation_date.readable = db.budgets.creation_date.writable = False
 
+db.define_table(
+    'budget_items',
+    Field('budget_id', requires=IS_NOT_EMPTY()),
+    Field('name', requires=IS_NOT_EMPTY()),
+    Field('type', 'boolean', requires=IS_NOT_EMPTY()),
+    Field('amount', 'integer', requires=IS_INT_IN_RANGE(0, 1e6)),
+    Field('creation_date', 'datetime', default=get_time),
+)
+
+db.budget_items.id.readable = db.budget_items.id.writable = False
+db.budget_items.budget_id.readable = db.budget_items.budget_id.writable = False
+db.budget_items.creation_date.readable = db.budget_items.creation_date.writable = False
 
 db.commit()

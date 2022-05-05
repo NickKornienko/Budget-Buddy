@@ -36,50 +36,42 @@ url_signer = URLSigner(session)
 
 
 @action('index')
-@action.uses('index.html', db, auth, url_signer)
+@action.uses('index.html', db, auth.user, url_signer)
 def index():
-    # Redirects to login page after checking for logged in user.
-    if get_user_email() is None:
-        redirect(URL('login'))
-
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
-        # COMPLETE: return here any signed URLs you need.
         my_callback_url=URL('my_callback', signer=url_signer),
-        rows=rows, url_signer=url_signer,
+        rows=rows,
+        url_signer=url_signer
     )
 
 
-@action('create')
-@action.uses('create.html', db, auth, url_signer)
+@action('create', method=["GET", "POST"])
+@action.uses('create.html', db, auth.user, url_signer.verify())
 def create():
-    # Redirects to login page after checking for logged in user.
-    if get_user_email() is None:
-        redirect(URL('login'))
-   # Insert form: no record= in it.
     form = Form(db.budgets, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
-        # We simply redirect; the insertion already happened.
-        redirect(URL('index'))
-    # Either this is a GET request, or this is a POST but not accepted = with errors.
+        redirect(URL('display'))
     return dict(
-        form=form,
         my_callback_url=URL('my_callback', signer=url_signer),
+        form=form,
+        url_signer=url_signer
     )
 
 
 @action('display')
-@action.uses('display.html', db, auth, url_signer)
+@action.uses('display.html', db, auth.user, url_signer)
 def display():
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
-        rows=db(db.budgets.user_id == get_user_email()).select()
+        rows=db(db.budgets.user_id == get_user_email()).select(),
+        url_signer=url_signer
     )
 
 
-@action('del/<budget_id:int>')
-@action.uses(db, auth.user, session, url_signer)
-def inc(budget_id=None):
+@action('delete/<budget_id:int>')
+@action.uses(db, auth.user, session, url_signer.verify())
+def delete(budget_id=None):
     assert budget_id is not None
     db(db.budgets.id == budget_id).delete()
     redirect(URL('display'))
