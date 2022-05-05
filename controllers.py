@@ -25,7 +25,7 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Field
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
@@ -46,25 +46,28 @@ def index():
     )
 
 
-@action('create', method=["GET", "POST"])
-@action.uses('create.html', db, auth.user, url_signer.verify())
-def create():
-    form = Form(db.budgets, csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        redirect(URL('display'))
-    return dict(
-        my_callback_url=URL('my_callback', signer=url_signer),
-        form=form,
-        url_signer=url_signer
-    )
-
-
 @action('display')
 @action.uses('display.html', db, auth.user, url_signer)
 def display():
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
         rows=db(db.budgets.user_id == get_user_email()).select(),
+        url_signer=url_signer
+    )
+
+
+@action('create', method=["GET", "POST"])
+@action.uses('create.html', db, auth.user, url_signer.verify())
+def create():
+    form = Form([Field('name')], csrf_session=session,
+                formstyle=FormStyleBulma)
+    if form.accepted:
+        db.budgets.insert(name=form.vars['name'])
+        redirect(URL('display'))
+
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        form=form,
         url_signer=url_signer
     )
 

@@ -4,6 +4,7 @@ This file defines the database models
 
 from cmath import inf
 import datetime
+from email.policy import default
 from .common import db, Field, auth
 from pydal.validators import *
 
@@ -20,8 +21,9 @@ db.define_table(
     'budgets',
     Field('name', requires=IS_NOT_EMPTY()),
     Field('user_id', default=get_user_email),
-    Field('expenses', 'integer', requires=IS_INT_IN_RANGE(0, 1e6)),
-    Field('income', 'integer', requires=IS_INT_IN_RANGE(0, 1e6)),
+    Field('expenses', 'integer', default=0),
+    Field('income', 'integer', default=0),
+    Field('net_flow', 'integer', default=0),
     Field('creation_date', 'datetime', default=get_time),
 )
 

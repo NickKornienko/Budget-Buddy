@@ -9,6 +9,9 @@
 
 <div class="section" id="vue-target" v-cloak>
 
+   <h1 class="title">Budget Buddy</h1>
+   <h2 class="subtitle">View budgets</h2>
+
    <a class="button is-success" href="[[=URL('create', signer=url_signer)]]">
       <span class="icon"><i class="fa fa-plus"></i></span>
       <span>Create new budget</span>
@@ -17,10 +20,14 @@
    <table class="table is-striped is-fullwidth">
       <tr>
          <th>Budget name</th>
+         <th>Net Flow</th>
+         <th></th>
+         <th></th>
       </tr>
       [[for row in rows:]]
       <tr>
          <td>[[=row.name]]</td>
+         <td>$[[=row.net_flow]]</td>
          <td>
             <a class="button" href="[[=URL('edit', row.id, signer=url_signer)]]">
                <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Edit</span>
