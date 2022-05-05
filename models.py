@@ -35,7 +35,7 @@ db.define_table(
     'budget_items',
     Field('budget_id', requires=IS_NOT_EMPTY()),
     Field('name', requires=IS_NOT_EMPTY()),
-    Field('type', 'boolean', requires=IS_NOT_EMPTY()),
+    Field('type', requires=IS_IN_SET(['Expense', 'Income'])),
     Field('amount', 'integer', requires=IS_INT_IN_RANGE(0, 1e6)),
     Field('creation_date', 'datetime', default=get_time),
 )

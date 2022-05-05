@@ -30,7 +30,7 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
-from py4web.utils.form import Form, FormStyleBulma
+from py4web.utils.form import Form, FormStyleBulma, FormStyleDefault, RadioWidget
 
 url_signer = URLSigner(session)
 
@@ -72,9 +72,59 @@ def create():
     )
 
 
-@action('delete/<budget_id:int>')
+@action('edit_budget/<budget_id:int>', method=["GET", "POST"])
+# need to fix .verify()
+@action.uses('edit_budget.html', db, auth.user, url_signer)
+def edit_budget(budget_id=None):
+    assert budget_id is not None
+
+    budget_name = db(db.budgets.id == budget_id).select()[0].name
+    rows = db(db.budget_items.budget_id == budget_id).select()
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        rows=rows,
+        budget_name=budget_name,
+        budget_id=budget_id,
+        url_signer=url_signer
+    )
+
+
+@action('delete_budget/<budget_id:int>')
 @action.uses(db, auth.user, session, url_signer.verify())
-def delete(budget_id=None):
+def delete_budget(budget_id=None):
     assert budget_id is not None
     db(db.budgets.id == budget_id).delete()
     redirect(URL('display'))
+
+
+@action('add_budget_item/<budget_id:int>', method=["GET", "POST"])
+@action.uses('add_budget_item.html', db, auth.user, url_signer.verify())
+def add_budget_item(budget_id=None):
+    assert budget_id is not None
+    # FormStyleDefault.widgets['type']=RadioWidget() # type should be a radio button rather than text boz
+    form = Form([Field('name'), Field('amount'), Field('type')], csrf_session=session,
+                formstyle=FormStyleBulma)
+    if form.accepted:
+        db.budget_items.insert(
+            budget_id=budget_id,
+            name=form.vars['name'],
+            amount=form.vars['amount'],
+            type=form.vars['type'])
+        redirect(URL(f'edit_budget/{budget_id}'))
+
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        form=form,
+        url_signer=url_signer
+    )
+
+# TODO: add edit_budget_item
+
+
+@action('delete_budget_item/<budget_id:int>/<budget_item_id:int>')
+@action.uses(db, auth.user, session, url_signer.verify())
+def delete_budget(budget_id=None, budget_item_id=None):
+    assert budget_id is not None
+    assert budget_item_id is not None
+    db(db.budget_items.id == budget_item_id).delete()
+    redirect(URL(f'edit_budget/{budget_id}'))
