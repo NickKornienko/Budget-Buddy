@@ -83,3 +83,10 @@ def inc(budget_id=None):
     assert budget_id is not None
     db(db.budgets.id == budget_id).delete()
     redirect(URL('display'))
+
+
+
+@action('login')
+@action.uses('login.html', auth, url_signer)
+def login():
+    return dict()
