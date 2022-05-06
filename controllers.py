@@ -25,68 +25,111 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Field
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
-from py4web.utils.form import Form, FormStyleBulma
+from py4web.utils.form import Form, FormStyleBulma, FormStyleDefault, RadioWidget
 
 url_signer = URLSigner(session)
 
 
 @action('index')
-@action.uses('index.html', db, auth, url_signer)
+@action.uses('index.html', db, auth.user, url_signer)
 def index():
-    # Redirects to login page after checking for logged in user.
-    if get_user_email() is None:
-        redirect(URL('login'))
-
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
-        # COMPLETE: return here any signed URLs you need.
         my_callback_url=URL('my_callback', signer=url_signer),
-        rows=rows, url_signer=url_signer,
+        rows=rows,
+        url_signer=url_signer
     )
-
-
-@action('create')
-@action.uses('create.html', db, auth, url_signer)
-def create():
-    # Redirects to login page after checking for logged in user.
-    if get_user_email() is None:
-        redirect(URL('login'))
-   # Insert form: no record= in it.
-    form = Form(db.budgets, csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        # We simply redirect; the insertion already happened.
-        redirect(URL('index'))
-    # Either this is a GET request, or this is a POST but not accepted = with errors.
-    return dict(
-        form=form,
-        my_callback_url=URL('my_callback', signer=url_signer),
-    )
-
-
-@action('display')
-@action.uses('display.html', db, auth, url_signer)
-def display():
-    return dict(
-        my_callback_url=URL('my_callback', signer=url_signer),
-        rows=db(db.budgets.user_id == get_user_email()).select()
-    )
-
-
-@action('del/<budget_id:int>')
-@action.uses(db, auth.user, session, url_signer)
-def inc(budget_id=None):
-    assert budget_id is not None
-    db(db.budgets.id == budget_id).delete()
-    redirect(URL('display'))
-
 
 
 @action('login')
 @action.uses('login.html', auth, url_signer)
 def login():
     return dict()
+
+@action('display')
+@action.uses('display.html', db, auth.user, url_signer)
+def display():
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        rows=db(db.budgets.user_id == get_user_email()).select(),
+        url_signer=url_signer
+    )
+
+
+@action('create', method=["GET", "POST"])
+@action.uses('create.html', db, auth.user, url_signer.verify())
+def create():
+    form = Form([Field('name')], csrf_session=session,
+                formstyle=FormStyleBulma)
+    if form.accepted:
+        db.budgets.insert(name=form.vars['name'])
+        redirect(URL('display'))
+
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        form=form,
+        url_signer=url_signer
+    )
+
+
+@action('edit_budget/<budget_id:int>', method=["GET", "POST"])
+# need to fix .verify()
+@action.uses('edit_budget.html', db, auth.user, url_signer)
+def edit_budget(budget_id=None):
+    assert budget_id is not None
+
+    budget_name = db(db.budgets.id == budget_id).select()[0].name
+    rows = db(db.budget_items.budget_id == budget_id).select()
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        rows=rows,
+        budget_name=budget_name,
+        budget_id=budget_id,
+        url_signer=url_signer
+    )
+
+
+@action('delete_budget/<budget_id:int>')
+@action.uses(db, auth.user, session, url_signer.verify())
+def delete_budget(budget_id=None):
+    assert budget_id is not None
+    db(db.budgets.id == budget_id).delete()
+    redirect(URL('display'))
+
+
+@action('add_budget_item/<budget_id:int>', method=["GET", "POST"])
+@action.uses('add_budget_item.html', db, auth.user, url_signer.verify())
+def add_budget_item(budget_id=None):
+    assert budget_id is not None
+    # FormStyleDefault.widgets['type']=RadioWidget() # type should be a radio button rather than text boz
+    form = Form([Field('name'), Field('amount'), Field('type')], csrf_session=session,
+                formstyle=FormStyleBulma)
+    if form.accepted:
+        db.budget_items.insert(
+            budget_id=budget_id,
+            name=form.vars['name'],
+            amount=form.vars['amount'],
+            type=form.vars['type'])
+        redirect(URL(f'edit_budget/{budget_id}'))
+
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        form=form,
+        url_signer=url_signer
+    )
+
+# TODO: add edit_budget_item
+
+
+@action('delete_budget_item/<budget_id:int>/<budget_item_id:int>')
+@action.uses(db, auth.user, session, url_signer.verify())
+def delete_budget(budget_id=None, budget_item_id=None):
+    assert budget_id is not None
+    assert budget_item_id is not None
+    db(db.budget_items.id == budget_item_id).delete()
+    redirect(URL(f'edit_budget/{budget_id}'))
