@@ -12,6 +12,10 @@
     <h1 class="title">Budget Buddy</h1>
     <h2 class="subtitle">View/edit budget: [[=budget_name]]</h2>
 
+    <a class="button is-danger" href="[[=URL('display', signer=url_signer)]]">
+        <span>Back to Display</span>
+    </a>
+
     <a class="button is-success" href="[[=URL('add_budget_item', budget_id, signer=url_signer)]]">
         <span class="icon"><i class="fa fa-plus"></i></span>
         <span>Add new budget item</span>
