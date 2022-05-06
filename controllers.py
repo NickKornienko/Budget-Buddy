@@ -46,6 +46,11 @@ def index():
     )
 
 
+@action('login')
+@action.uses('login.html', auth, url_signer)
+def login():
+    return dict()
+
 @action('display')
 @action.uses('display.html', db, auth.user, url_signer)
 def display():
