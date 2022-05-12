@@ -68,3 +68,60 @@ def inc(budget_id=None):
     db(db.budgets.id == budget_id).delete()
     redirect(URL('display'))
 
+<<<<<<< Updated upstream
+=======
+
+@action('add_budget_item/<budget_id:int>', method=["GET", "POST"])
+@action.uses('add_budget_item.html', db, auth.user, url_signer.verify())
+def add_budget_item(budget_id=None):
+    assert budget_id is not None
+    # FormStyleDefault.widgets['type']=RadioWidget() # type should be a radio button rather than text boz
+    form = Form([Field('name'), Field('amount'), Field('type')], csrf_session=session,
+                formstyle=FormStyleBulma)
+    if form.accepted:
+        db.budget_items.insert(
+            budget_id=budget_id,
+            name=form.vars['name'],
+            amount=form.vars['amount'],
+            type=form.vars['type'])
+        redirect(URL(f'edit_budget/{budget_id}'))
+
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        budget_id=budget_id,
+        form=form,
+        url_signer=url_signer
+    )
+
+
+@action('edit_budget_item/<budget_id:int>/<budget_items_id:int>', method=["GET", "POST"])
+@action.uses('edit_budget_item.html', db, session, auth.user, url_signer, url_signer.verify())
+def edit_budget_item(budget_items_id=None, budget_id=None):
+    assert budget_items_id is not None
+    # We read the bird being edited from the db.
+    # p = db(db.bird.id == bird_name).select().first()
+    p = db(db.budget_items.id == budget_items_id).select().first()
+    if p is None:
+        # Nothing found to be edited!
+        redirect(URL('edit_budget', budget_id, signer=url_signer))
+    # Edit form: it has record=
+    form = Form(db.budget_items, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        # The update already happened!
+        redirect(URL('edit_budget', budget_id, signer=url_signer))
+    return dict(
+        form=form, 
+        url_signer = url_signer, 
+        budget_id=budget_id,
+        my_callback_url=URL('my_callback', signer=url_signer)
+    )
+
+
+@action('delete_budget_item/<budget_id:int>/<budget_item_id:int>')
+@action.uses(db, auth.user, session, url_signer.verify())
+def delete_budget(budget_id=None, budget_item_id=None):
+    assert budget_id is not None
+    assert budget_item_id is not None
+    db(db.budget_items.id == budget_item_id).delete()
+    redirect(URL(f'edit_budget/{budget_id}'))
+>>>>>>> Stashed changes
