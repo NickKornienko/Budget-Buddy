@@ -123,7 +123,23 @@ def add_budget_item(budget_id=None):
         url_signer=url_signer
     )
 
-# TODO: add edit_budget_item
+
+@action('edit_budget_item/<budget_id:int>/<budget_items_id:int>', method=["GET", "POST"])
+@action.uses('edit_budget_item.html', db, session, auth.user, url_signer, url_signer.verify())
+def edit_budget_item(budget_items_id=None, budget_id=None):
+    assert budget_items_id is not None
+    # We read the bird being edited from the db.
+    # p = db(db.bird.id == bird_name).select().first()
+    p = db(db.budget_items.id == budget_items_id).select().first()
+    if p is None:
+        # Nothing found to be edited!
+        redirect(URL('edit_budget', budget_id, signer=url_signer))
+    # Edit form: it has record=
+    form = Form(db.budget_items, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        # The update already happened!
+        redirect(URL('edit_budget', budget_id, signer=url_signer))
+    return dict(form=form, url_signer = url_signer, budget_id=budget_id)
 
 
 @action('delete_budget_item/<budget_id:int>/<budget_item_id:int>')
