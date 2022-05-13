@@ -119,6 +119,7 @@ def add_budget_item(budget_id=None):
 
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
+        budget_id=budget_id,
         form=form,
         url_signer=url_signer
     )
@@ -139,7 +140,12 @@ def edit_budget_item(budget_items_id=None, budget_id=None):
     if form.accepted:
         # The update already happened!
         redirect(URL('edit_budget', budget_id, signer=url_signer))
-    return dict(form=form, url_signer = url_signer, budget_id=budget_id)
+    return dict(
+        form=form, 
+        url_signer=url_signer, 
+        budget_id=budget_id,
+        my_callback_url=URL('my_callback', signer=url_signer)
+    )
 
 
 @action('delete_budget_item/<budget_id:int>/<budget_item_id:int>')

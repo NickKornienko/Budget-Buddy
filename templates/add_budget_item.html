@@ -10,6 +10,10 @@
 <div class="section" id="vue-target" v-cloak>
   <h1 class="title">Budget Buddy</h1>
   <h2 class="subtitle">Add a new budget item</h2>
+  <a class="button" href="[[=URL('edit_budget', budget_id, signer=url_signer)]]">
+    <span class="icon"><i class="fa fa-angle-left"></i></span>
+    <span>Back</span>
+  </a>
   <div class="container">
     [[=form]]
   </div>
