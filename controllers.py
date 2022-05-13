@@ -31,6 +31,7 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
 from py4web.utils.form import Form, FormStyleBulma, FormStyleDefault, RadioWidget
+from pydal.validators import *
 
 url_signer = URLSigner(session)
 
