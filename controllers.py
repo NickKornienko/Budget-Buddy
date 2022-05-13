@@ -107,15 +107,14 @@ def delete_budget(budget_id=None):
 def add_budget_item(budget_id=None):
     assert budget_id is not None
     # FormStyleDefault.widgets['type']=RadioWidget() # type should be a radio button rather than text boz
-    form = Form(db.budget_items, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
-    #Form([Field('name'), Field('amount'), Field('type')], csrf_session=session, formstyle=FormStyleBulma)
+    form = Form([Field('name'), Field('amount'), Field('type', requires=IS_IN_SET(['Expense', 'Income']))], csrf_session=session, 
+        formstyle=FormStyleBulma)
     if form.accepted:
-        
         db.budget_items.insert(
-            budget_id=budget_id,
-            name=form.vars['name'],
-            amount=form.vars['amount'],
-            type=form.vars['type'])
+             budget_id=budget_id,
+             name=form.vars['name'],
+             amount=form.vars['amount'],
+             type=form.vars['type'])
         redirect(URL(f'edit_budget/{budget_id}'))
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
