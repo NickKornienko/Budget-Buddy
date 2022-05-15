@@ -157,4 +157,4 @@ def delete_budget(budget_id=None, budget_item_id=None):
     assert budget_id is not None
     assert budget_item_id is not None
     db(db.budget_items.id == budget_item_id).delete()
-    redirect(URL(f'edit_budget/{budget_id}'))
+    redirect(URL(f'edit_budget/{budget_id}', signer=url_signer))
