@@ -80,18 +80,21 @@ def create():
 
 @action('edit_budget/<budget_id:int>', method=["GET", "POST"])
 # need to fix .verify()
-@action.uses('edit_budget.html', db, auth.user, url_signer)
+@action.uses('edit_budget.html', db, auth.user, url_signer, url_signer.verify())
 def edit_budget(budget_id=None):
     assert budget_id is not None
 
     budget_name = db(db.budgets.id == budget_id).select()[0].name
     rows = db(db.budget_items.budget_id == budget_id).select()
+    
+    
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
         rows=rows,
         budget_name=budget_name,
         budget_id=budget_id,
-        url_signer=url_signer
+        url_signer=url_signer,
+        #total=total
     )
 
 
@@ -116,7 +119,7 @@ def add_budget_item(budget_id=None):
              name=form.vars['name'],
              amount=form.vars['amount'],
              type=form.vars['type'])
-        redirect(URL(f'edit_budget/{budget_id}'))
+        redirect(URL(f'edit_budget/{budget_id}', signer=url_signer))
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
         budget_id=budget_id,
