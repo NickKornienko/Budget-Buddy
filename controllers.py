@@ -46,6 +46,16 @@ def index():
         url_signer=url_signer
     )
 
+@action('graph')
+@action.uses('graph_display.html', db, auth.user, url_signer)
+def index():
+    rows = db(db.budgets.user_id == get_user_email()).select()
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        rows=rows,
+        url_signer=url_signer
+    )
+
 
 @action('login')
 @action.uses('login.html', auth, url_signer)
