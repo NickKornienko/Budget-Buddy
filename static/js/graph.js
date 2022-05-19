@@ -19,9 +19,7 @@ let init = (app) => {
         return a;
     };
     
-
-    
-    app.set_chart = function () {
+    app.draw1 = function () {
         let data = google.visualization.arrayToDataTable([
           ['Task', 'Hours per Day'],
           ['Work',     11],
@@ -40,7 +38,7 @@ let init = (app) => {
        
     }
 
-    app.draw = function () {
+    app.draw2 = function () {
         let data = google.visualization.arrayToDataTable([
           ['Task', 'Hours per Day'],
           ['Work',     11],
@@ -72,18 +70,19 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
+
+        // Let's draw our first chart.
+        app.draw1();
+
     };
 
     // Call to the initializer.
     app.init();
 };
 
-// This takes the (empty) app object, and initializes it,
-// putting all the code i
-init(app);
 
 // Load the Visualization API and the corechart package.
 google.charts.load('current', {'packages':['corechart']});
 
 // Set a callback to run when the Google Visualization API is loaded.
-google.charts.setOnLoadCallback(app.set_chart);
+google.charts.setOnLoadCallback(function () {init(app);});
