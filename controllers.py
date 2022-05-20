@@ -37,7 +37,17 @@ url_signer = URLSigner(session)
 
 
 @action('index')
-@action.uses('index.html', db, auth.user, url_signer)
+@action.uses('display.html', db, auth.user, url_signer)
+def index():
+    rows = db(db.budgets.user_id == get_user_email()).select()
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        rows=rows,
+        url_signer=url_signer
+    )
+    
+@action('graph')
+@action.uses('graph_display.html', db, auth.user, url_signer)
 def index():
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
@@ -79,7 +89,7 @@ def create():
 
 
 @action('edit_budget/<budget_id:int>', method=["GET", "POST"])
-# need to fix .verify()
+
 @action.uses('edit_budget.html', db, auth.user, url_signer, url_signer.verify())
 def edit_budget(budget_id=None):
     assert budget_id is not None

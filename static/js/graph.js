@@ -10,6 +10,10 @@ let init = (app) => {
     // This is the Vue data.
     app.data = {
         // Complete as you see fit.
+        data:[],
+        chart:[],
+        options:{},
+        
     };
 
     app.enumerate = (a) => {
@@ -52,13 +56,15 @@ let init = (app) => {
         let options = {'title':'How Much Pizza I Ate Last Night',
                        'width':400,
                        'height':300};
-        app.chart.draw(data, options);
+        //app.chart.draw(data, options);
     }
 
     
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
+        set_chart: app.set_chart,
+        
     };
 
     // This creates the Vue instance.
@@ -72,6 +78,10 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
+        axios.get(graph).then(function (response) {
+            app.vue.chart = app.enumerate(response.data.chart);
+        });
+       app.set_chart();
     };
 
     // Call to the initializer.
@@ -80,10 +90,14 @@ let init = (app) => {
 
 // This takes the (empty) app object, and initializes it,
 // putting all the code i
-init(app);
+function start_app() {
+    init(app);
+}
+
 
 // Load the Visualization API and the corechart package.
 google.charts.load('current', {'packages':['corechart']});
 
 // Set a callback to run when the Google Visualization API is loaded.
-google.charts.setOnLoadCallback(app.set_chart);
+google.charts.setOnLoadCallback(start_app);
+
