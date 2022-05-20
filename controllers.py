@@ -46,6 +46,7 @@ def index():
         url_signer=url_signer
     )
 
+
 @action('graph')
 @action.uses('graph_display.html', db, auth.user, url_signer)
 def index():
@@ -61,6 +62,7 @@ def index():
 @action.uses('login.html', auth, url_signer)
 def login():
     return dict()
+
 
 @action('display')
 @action.uses('display.html', db, auth.user, url_signer)
@@ -89,22 +91,20 @@ def create():
 
 
 @action('edit_budget/<budget_id:int>', method=["GET", "POST"])
-
 @action.uses('edit_budget.html', db, auth.user, url_signer, url_signer.verify())
 def edit_budget(budget_id=None):
     assert budget_id is not None
 
     budget_name = db(db.budgets.id == budget_id).select()[0].name
     rows = db(db.budget_items.budget_id == budget_id).select()
-    
-    
+
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
         rows=rows,
         budget_name=budget_name,
         budget_id=budget_id,
         url_signer=url_signer,
-        #total=total
+        # total=total
     )
 
 
@@ -121,14 +121,18 @@ def delete_budget(budget_id=None):
 def add_budget_item(budget_id=None):
     assert budget_id is not None
     # FormStyleDefault.widgets['type']=RadioWidget() # type should be a radio button rather than text boz
-    form = Form([Field('name'), Field('amount'), Field('type', requires=IS_IN_SET(['Expense', 'Income']))], csrf_session=session, 
-        formstyle=FormStyleBulma)
+    form = Form([Field('name'), Field('amount'), Field('type', requires=IS_IN_SET(['Expense', 'Income']))], csrf_session=session,
+                formstyle=FormStyleBulma)
     if form.accepted:
         db.budget_items.insert(
-             budget_id=budget_id,
-             name=form.vars['name'],
-             amount=form.vars['amount'],
-             type=form.vars['type'])
+            budget_id=budget_id,
+            name=form.vars['name'],
+            amount=form.vars['amount'],
+            type=form.vars['type']
+        )
+
+        update_budget(budget_id)
+
         redirect(URL(f'edit_budget/{budget_id}', signer=url_signer))
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
@@ -149,16 +153,36 @@ def edit_budget_item(budget_items_id=None, budget_id=None):
         # Nothing found to be edited!
         redirect(URL('edit_budget', budget_id, signer=url_signer))
     # Edit form: it has record=
-    form = Form(db.budget_items, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    form = Form(db.budget_items, record=p, deletable=False,
+                csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         # The update already happened!
+        update_budget(budget_id)
         redirect(URL('edit_budget', budget_id, signer=url_signer))
     return dict(
-        form=form, 
-        url_signer=url_signer, 
+        form=form,
+        url_signer=url_signer,
         budget_id=budget_id,
         my_callback_url=URL('my_callback', signer=url_signer)
     )
+
+
+def update_budget(budget_id):
+    budget_items = db(db.budget_items.budget_id ==
+                      budget_id).select().as_list()
+
+    expenses = 0
+    income = 0
+    for budget_item in budget_items:
+        if budget_item['type'] == 'Expense':
+            expenses += budget_item['amount']
+        else:
+            income += budget_item['amount']
+
+    net_flow = income - expenses
+
+    db(db.budgets.id == budget_id).update(
+        expenses=expenses, income=income, net_flow=net_flow)
 
 
 @action('delete_budget_item/<budget_id:int>/<budget_item_id:int>')
