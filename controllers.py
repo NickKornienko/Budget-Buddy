@@ -37,7 +37,7 @@ url_signer = URLSigner(session)
 
 
 @action('index')
-@action.uses('index.html', db, auth.user, url_signer)
+@action.uses('display.html', db, auth.user, url_signer)
 def index():
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
