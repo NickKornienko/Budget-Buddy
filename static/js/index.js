@@ -23,6 +23,11 @@ let init = (app) => {
         return a;
     };
     
+    app.selectHandler = function() {
+        var selectedItem = chart.getSelection()[0];
+        var value = data.getValue(selectedItem.row, 0);
+        alert('The user selected ' + value);
+      }
 
     
     app.drawChart = function() {
@@ -46,21 +51,18 @@ let init = (app) => {
 
         // Instantiate and draw our chart, passing in some options.
         chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
-        google.visualization.events.addListener(chart, 'select', selectHandler);
+        google.visualization.events.addListener(chart, 'select', app.selectHandler);
         chart.draw(data, options);
       }
 
-    app.selectHandler = function() {
-        var selectedItem = chart.getSelection()[0];
-        var value = data.getValue(selectedItem.row, 0);
-        alert('The user selected ' + value);
-      }
+    
     
     
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
-        drawChart: app.set_chart,
+        drawChart: app.drawChart,
+        selectHandler: app.selectHandler,
         
     };
 
@@ -75,9 +77,9 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
-        axios.get(graph).then(function (response) {
-            app.vue.chart = app.enumerate(response.data.chart);
-        });
+        //axios.get(chart).then(function (response) {
+        //    app.vue.chart = app.enumerate(response.data.chart);
+        //});
        app.drawChart();
     };
 
@@ -90,10 +92,10 @@ let init = (app) => {
 function start_app() {
     init(app);
 }
-init(app);
+//init(app);
 
 // Load the Visualization API and the piechart package.
 google.charts.load('current', {'packages':['corechart']});
 
 // Set a callback to run when the Google Visualization API is loaded.
-google.charts.setOnLoadCallback(start_ap);
+    google.charts.setOnLoadCallback(start_app);
