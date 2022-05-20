@@ -45,7 +45,7 @@ def index():
         rows=rows,
         url_signer=url_signer
     )
-    
+
 @action('graph')
 @action.uses('graph_display.html', db, auth.user, url_signer)
 def index():
