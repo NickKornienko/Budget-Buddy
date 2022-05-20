@@ -19,7 +19,6 @@ let init = (app) => {
         return a;
     };
 
-
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.

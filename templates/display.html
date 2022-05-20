@@ -7,47 +7,41 @@
 </style>
 
 
+
 <div class="section" id="vue-target" v-cloak>
-   <div class="pb-4">
-   
-      <h1 class="title">Budget Buddy</h1>
-      <h2 class="subtitle">View budgets</h2>
-   
-   </div>
-   
-   <div class="pb-4">
-      <a class="button is-success has-text-black" href="[[=URL('create', signer=url_signer)]]">
-         <span class="icon"><i class="fa fa-plus"></i></span>
-         <span>Create new budget</span>
-      </a>
-   </div>
-   
-   <div class="">
-      <table class="table is-striped is-fullwidth pt-0 mt-0">
-         <tr>
-            <th>Budget name</th>
-            <th>Net Flow</th>
-            <th></th>
-            <th></th>
-         </tr>
-         [[for row in rows:]]
-         <tr>
-            <td>[[=row.name]]</td>
-            <td>$[[=row.net_flow]]</td>
-            <td>
-               <a class="button has-background-success" href="[[=URL('edit_budget', row.id, signer=url_signer)]]">
-                  <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Edit</span>
-               </a>
-            </td>
-            <td>
-               <a class="button has-background-danger" href="[[=URL('delete_budget', row.id, signer=url_signer)]]">
-                  <span class="icon"><i class="fa fa-fw fa-trash"></i></span>
-               </a>
-            </td>
-         </tr>
-         [[pass]]
-      </table>
-   </div>
+
+   <h1 class="title">Budget Buddy</h1>
+   <h2 class="subtitle">View budgets</h2>
+
+   <a class="button is-success" href="[[=URL('create', signer=url_signer)]]">
+      <span class="icon"><i class="fa fa-plus"></i></span>
+      <span>Create new budget</span>
+   </a>
+
+   <table class="table is-striped is-fullwidth">
+      <tr>
+         <th>Budget name</th>
+         <th>Net Flow</th>
+         <th></th>
+         <th></th>
+      </tr>
+      [[for row in rows:]]
+      <tr>
+         <td>[[=row.name]]</td>
+         <td>$[[=row.net_flow]]</td>
+         <td>
+            <a class="button" href="[[=URL('edit_budget', row.id, signer=url_signer)]]">
+               <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Edit</span>
+            </a>
+         </td>
+         <td>
+            <a class="button" href="[[=URL('delete_budget', row.id, signer=url_signer)]]">
+               <span class="icon"><i class="fa fa-fw fa-trash"></i></span>
+            </a>
+         </td>
+      </tr>
+      [[pass]]
+   </table>
 </div>
 
 

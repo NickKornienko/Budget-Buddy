@@ -89,7 +89,7 @@ def create():
 
 
 @action('edit_budget/<budget_id:int>', method=["GET", "POST"])
-# need to fix .verify()
+
 @action.uses('edit_budget.html', db, auth.user, url_signer, url_signer.verify())
 def edit_budget(budget_id=None):
     assert budget_id is not None
