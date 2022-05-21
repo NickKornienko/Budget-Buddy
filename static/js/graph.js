@@ -23,47 +23,46 @@ let init = (app) => {
         return a;
     };
     
+    app.selectHandler = function() {
+        var selectedItem = chart.getSelection()[0];
+        var value = data.getValue(selectedItem.row, 0);
+        alert('The user selected ' + value);
+      }
 
     
-    app.set_chart = function () {
-        let data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work',     11],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
+    app.drawChart = function() {
+
+        // Create our data table.
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topping');
+        data.addColumn('number', 'Slices');
+        data.addRows([
+          ['Mushrooms', 3],
+          ['Onions', 1],
+          ['Olives', 1],
+          ['Zucchini', 1],
+          ['Pepperoni', 2]
         ]);
-        let options = {'title':'How Much Pizza I Ate Last Night',
+
+        // Set chart options
+        options = {
                        'width':400,
                        'height':300};
-        
-        app.chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
-        
-        app.chart.draw(data, options);
-       
-    }
 
-    app.draw = function () {
-        let data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work',     11],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
-        ]);
-        let options = {'title':'How Much Pizza I Ate Last Night',
-                       'width':400,
-                       'height':300};
-        //app.chart.draw(data, options);
-    }
+        // Instantiate and draw our chart, passing in some options.
+        chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
+        google.visualization.events.addListener(chart, 'select', app.selectHandler);
+        chart.draw(data, options);
+      }
 
+    
+    
     
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
-        set_chart: app.set_chart,
+        drawChart: app.drawChart,
+        selectHandler: app.selectHandler,
         
     };
 
@@ -78,10 +77,10 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
-        axios.get(graph).then(function (response) {
-            app.vue.chart = app.enumerate(response.data.chart);
-        });
-       app.set_chart();
+        //axios.get(chart).then(function (response) {
+        //    app.vue.chart = app.enumerate(response.data.chart);
+        //});
+       app.drawChart();
     };
 
     // Call to the initializer.
@@ -93,11 +92,10 @@ let init = (app) => {
 function start_app() {
     init(app);
 }
+//init(app);
 
-
-// Load the Visualization API and the corechart package.
+// Load the Visualization API and the piechart package.
 google.charts.load('current', {'packages':['corechart']});
 
 // Set a callback to run when the Google Visualization API is loaded.
-google.charts.setOnLoadCallback(start_app);
-
+    google.charts.setOnLoadCallback(start_app);

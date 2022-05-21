@@ -47,14 +47,18 @@ def index():
     )
 
 
-@action('graph')
+@action('graph/<budget_id:int>')
 @action.uses('graph_display.html', db, auth.user, url_signer)
-def index():
+def index(budget_id=None):
+    assert budget_id is not None
+
+    budget_name = db(db.budgets.id == budget_id).select()[0].name
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
         rows=rows,
-        url_signer=url_signer
+        url_signer=url_signer,
+        budget_name=budget_name,
     )
 
 

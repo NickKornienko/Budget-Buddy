@@ -15,10 +15,15 @@
     <a class="button is-danger" href="[[=URL('display', signer=url_signer)]]">
         <span>Back to Display</span>
     </a>
+    
 
     <a class="button is-success" href="[[=URL('add_budget_item', budget_id, signer=url_signer)]]">
         <span class="icon"><i class="fa fa-plus"></i></span>
         <span>Add new budget item</span>
+    </a>
+    
+    <a class="button has-background-success" href="[[=URL('graph', budget_id, signer=url_signer)]]">
+        <span class="icon"><i class="fa fa-pie-chart"></i></span> <span>Visualize Budget</span>
     </a>
 
     <table class="table is-striped is-fullwidth">

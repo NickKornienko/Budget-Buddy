@@ -12,7 +12,7 @@
     <!--<GChart type="pie_chart" :options="options" :data="data" />-->
     <h1 class="title">Budget Buddy</h1>
     <h2 class="subtitle">View budgets</h2>
-    
+    <p>[[=budget_name]]</p>
     <div id="pie_chart"></div>
   
 </div>
@@ -25,5 +25,5 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">google.load('visualization', '1.0', {'packages':['corechart']});</script>
-<script src="js/index.js"></script>
+<script src="js/graph.js"></script>
 [[end]]
