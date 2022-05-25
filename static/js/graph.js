@@ -30,7 +30,7 @@ let init = (app) => {
       }
 
     
-    app.drawChart = function() {
+    app.pieChart = function() {
 
         // Create our data table.
         data = new google.visualization.DataTable();
@@ -61,7 +61,7 @@ let init = (app) => {
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
-        drawChart: app.drawChart,
+        pieChart: app.pieChart,
         selectHandler: app.selectHandler,
         
     };
@@ -80,7 +80,7 @@ let init = (app) => {
         //axios.get(chart).then(function (response) {
         //    app.vue.chart = app.enumerate(response.data.chart);
         //});
-       app.drawChart();
+       app.pieChart();
     };
 
     // Call to the initializer.
