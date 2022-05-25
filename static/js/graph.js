@@ -13,6 +13,7 @@ let init = (app) => {
         data:[],
         chart:[],
         options:{},
+        budgets:[],
         
     };
 
@@ -31,7 +32,8 @@ let init = (app) => {
 
     
     app.pieChart = function() {
-
+        
+            
         // Create our data table.
         data = new google.visualization.DataTable();
         data.addColumn('string', 'Topping');
@@ -53,9 +55,29 @@ let init = (app) => {
         chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
         google.visualization.events.addListener(chart, 'select', app.selectHandler);
         chart.draw(data, options);
-      }
+      };
 
-    
+    app.tableGraph = function() {
+        google.charts.load('current', {'packages':['table']});
+        google.charts.setOnLoadCallback(drawTable);
+        
+        function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('number', 'Salary');
+        data.addColumn('boolean', 'Full Time Employee');
+        data.addRows([
+        ['Mike',  {v: 10000, f: '$10,000'}, true],
+        ['Jim',   {v:8000,   f: '$8,000'},  false],
+        ['Alice', {v: 12500, f: '$12,500'}, true],
+        ['Bob',   {v: 7000,  f: '$7,000'},  true]
+        ]);
+
+        //var table = new google.visualization.Table(document.getElementById('table_div'));
+
+        //table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+    }
+    }
     
     
     // This contains all the methods.
@@ -63,6 +85,7 @@ let init = (app) => {
         // Complete as you see fit.
         pieChart: app.pieChart,
         selectHandler: app.selectHandler,
+        tableGraph: app.tableGraph,
         
     };
 
@@ -75,12 +98,13 @@ let init = (app) => {
 
     // And this initializes it.
     app.init = () => {
-        // Put here any initialization code.
-        // Typically this is a server GET call to load the data.
-        //axios.get(chart).then(function (response) {
-        //    app.vue.chart = app.enumerate(response.data.chart);
-        //});
+
+        axios.get(get_budgets_url).then(function (response) {
+            app.vue.budgets = app.enumerate(response.data.budgets);
+        });
+        
        app.pieChart();
+       //app.tableGraph();
     };
 
     // Call to the initializer.
@@ -99,3 +123,4 @@ google.charts.load('current', {'packages':['corechart']});
 
 // Set a callback to run when the Google Visualization API is loaded.
     google.charts.setOnLoadCallback(start_app);
+    

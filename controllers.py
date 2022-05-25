@@ -52,13 +52,17 @@ def index(budget_id=None):
         url_signer=url_signer,
         budget_name=budget_name,
         budget_id=budget_id,
+        get_budgets_url=URL('get_budgets', signer=url_signer),
     )
+    
+    
 
 @action('get_budgets')
 @action.uses(url_signer.verify(), db)
 def get_images():
     """Returns the list of images."""
-    return dict(images=db(db.images).select().as_list())
+    budgets=db(db.budgets).select().as_list()
+    return dict(budgets=budgets)
 
 @action('login')
 @action.uses('login.html', auth, url_signer)
