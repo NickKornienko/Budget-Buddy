@@ -13,9 +13,17 @@
     <h1 class="title">Budget Buddy</h1>
     <h2 class="subtitle">View budgets</h2>
     <p>[[=budget_name]]</p>
-    <div id="pie_chart"></div>
+
+   <div id="pie_chart"></div>
+
+    <a class="button" href="[[=URL('edit_budget', budget_id, signer=url_signer)]]">
+        <span class="icon"><i class="fa fa-angle-left"></i></span>
+        <span>Back</span>
+    </a>
+ </div>
   
 </div>
+
 
 
 [[block page_scripts]]
