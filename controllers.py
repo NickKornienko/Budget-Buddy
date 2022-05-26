@@ -103,13 +103,22 @@ def edit_budget(budget_id=None):
 
     budget_name = db(db.budgets.id == budget_id).select()[0].name
     rows = db(db.budget_items.budget_id == budget_id).select()
-
+    loop = db(db.budget_items).select().as_list()
+    netValue = 0
+    for x in range(1, len(loop)):
+        if loop[x]["type"] == "Expense":
+            netValue -= loop[x]["amount"]
+        else:
+            netValue += loop[x]["amount"]
+    
+    
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
         rows=rows,
         budget_name=budget_name,
         budget_id=budget_id,
         url_signer=url_signer,
+        total = netValue
         # total=total
     )
 
