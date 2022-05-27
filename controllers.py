@@ -46,7 +46,28 @@ def index():
         url_signer=url_signer
     )
 
+@action('graph/<budget_id:int>')
+@action.uses('graph_display.html', db, auth.user, url_signer)
+def index(budget_id=None):
+    assert budget_id is not None
 
+    budget_name = db(db.budgets.id == budget_id).select()[0].name
+    rows = db(db.budgets.user_id == get_user_email()).select()
+    return dict(
+        my_callback_url=URL('my_callback', signer=url_signer),
+        rows=rows,
+        url_signer=url_signer,
+        budget_name=budget_name,
+        budget_id=budget_id,
+        get_budgets_url=URL('get_budgets', signer=url_signer),
+    )
+
+@action('get_budgets')
+@action.uses(url_signer.verify(), db)
+def get_images():
+    """Returns the list of images."""
+    budgets=db(db.budgets).select().as_list()
+    return dict(budgets=budgets)
 
 
 @action('display')
