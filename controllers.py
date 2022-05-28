@@ -54,15 +54,15 @@ def index(budget_id=None):
         budget_id=budget_id,
         get_budgets_url=URL('get_budgets', signer=url_signer),
     )
-    
-    
+
 
 @action('get_budgets')
 @action.uses(url_signer.verify(), db)
 def get_images():
     """Returns the list of images."""
-    budgets=db(db.budgets).select().as_list()
+    budgets = db(db.budgets).select().as_list()
     return dict(budgets=budgets)
+
 
 @action('login')
 @action.uses('login.html', auth, url_signer)
@@ -103,6 +103,7 @@ def edit_budget(budget_id=None):
 
     budget_name = db(db.budgets.id == budget_id).select()[0].name
     rows = db(db.budget_items.budget_id == budget_id).select()
+    budget_items = db(db.budgets.id == budget_id).select().as_list()[0]
 
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
@@ -110,7 +111,9 @@ def edit_budget(budget_id=None):
         budget_name=budget_name,
         budget_id=budget_id,
         url_signer=url_signer,
-        # total=total
+        total=budget_items['net_flow'],
+        expenses=budget_items['expenses'],
+        income=budget_items['income']
     )
 
 
