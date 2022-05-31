@@ -1,20 +1,20 @@
 [[extend "layout.html"]]
-
-<style>
-  .auth-container {
-    max-width: 80%;
-    min-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 1px solid #e1e1e1;
-    border-radius: 10px;
-    padding: 20px;
-  }
-  a.button {
-      margin-left: 10px;
-  }
-</style>
-
-<section class="section">
-  [[=form]]
+<section class="hero is-fullheight is-success">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="column is-4 is-offset-4">
+        <h3 class="title has-text-white">Welcome to Budget Buddy</h3>
+        <hr class="login-hr">
+        <p class="subtitle has-text-white">Please Sign in or Create an account to proceed</p>
+        <br>
+      </div>
+      <div class="columns is-centered">
+        <div class="box">
+          <section class="section">
+            [[=form]]
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
