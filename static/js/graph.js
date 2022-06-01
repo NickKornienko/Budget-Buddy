@@ -12,10 +12,13 @@ let init = (app) => {
         // Complete as you see fit.
         In_pie_data: [],
         Ex_pie_data: [],
+        columns_data: [],
+        in_chart:[],
+        ex_chart:[],
+        co_chart:[],
         budgets: [],
         budget_items: [],
         budget_id: 0,
-        columns_data: [],
         display_mode: 'none',
         render_pie: false,
         render_column: false
@@ -28,12 +31,23 @@ let init = (app) => {
         return a;
     };
 
-    app.selectHandler = function () {
-        var selectedItem = chart.getSelection()[0];
-        var value = data.getValue(selectedItem.row, 0);
+    app.InselectHandler = function () {
+        var selectedItem = app.vue.in_chart.getSelection()[0];
+        var value = app.vue.In_pie_data.getValue(selectedItem.row, 0);
         alert('The user selected ' + value);
     }
 
+    app.ExselectHandler = function () {
+        var selectedItem = app.vue.ex_chart.getSelection()[0];
+        var value = app.vue.Ex_pie_data.getValue(selectedItem.row, 0);
+        alert('The user selected ' + value);
+    }
+
+    app.CoselectHandler = function () {
+        var selectedItem = app.vue.co_chart.getSelection()[0];
+        var value = app.vue.columns_data.getValue(selectedItem.row, 0);
+        alert('The user selected ' + value);
+    }
 
     app.pieChart = function () {
 
@@ -69,13 +83,13 @@ let init = (app) => {
         };
 
         // Instantiate and draw our chart, passing in some options.
-        let Inchart = new google.visualization.PieChart(document.getElementById('Income_pie_chart'));
-        google.visualization.events.addListener(Inchart, 'select', app.selectHandler);
-        Inchart.draw(app.vue.In_pie_data, Inoptions);
+        app.vue.in_chart = new google.visualization.PieChart(document.getElementById('Income_pie_chart'));
+        google.visualization.events.addListener(app.vue.in_chart, 'select', app.InselectHandler);
+        app.vue.in_chart.draw(app.vue.In_pie_data, Inoptions);
 
-        let Exchart = new google.visualization.PieChart(document.getElementById('Expense_pie_chart'));
-        google.visualization.events.addListener(Exchart, 'select', app.selectHandler);
-        Exchart.draw(app.vue.Ex_pie_data, Exoptions);
+        app.vue.ex_chart = new google.visualization.PieChart(document.getElementById('Expense_pie_chart'));
+        google.visualization.events.addListener(app.vue.ex_chart, 'select', app.ExselectHandler);
+        app.vue.ex_chart.draw(app.vue.Ex_pie_data, Exoptions);
     };
 
     app.columnChart = function () {
@@ -101,9 +115,9 @@ let init = (app) => {
         };
 
         // Instantiate and draw the chart.
-        let chart = new google.visualization.ColumnChart(document.getElementById('column_chart'));
-        google.visualization.events.addListener(chart, 'select', app.selectHandler);
-        chart.draw(app.vue.columns_data, options);
+        app.vue.co_chart = new google.visualization.ColumnChart(document.getElementById('column_chart'));
+        google.visualization.events.addListener(app.vue.co_chart, 'select', app.CoselectHandler);
+        app.vue.co_chart.draw(app.vue.columns_data, options);
     }
 
 
@@ -141,7 +155,9 @@ let init = (app) => {
         // Complete as you see fit.
         pieChart: app.pieChart,
         columnChart: app.columnChart,
-        selectHandler: app.selectHandler,
+        InselectHandler: app.InselectHandler,
+        ExselectHandler: app.ExselectHandler,
+        CoselectHandler: app.CoselectHandler,
         display_items: app.display_items,
         //tableGraph: app.tableGraph,
 
