@@ -22,6 +22,9 @@
       <tr>
          <th>Budget name</th>
          <th>Net Flow</th>
+         <th>Expenses</th>
+         <th>Income</th>
+         <th></th>
          <th></th>
          <th></th>
       </tr>
@@ -29,6 +32,13 @@
       <tr>
          <td>[[=row.name]]</td>
          <td>$[[=row.net_flow]]</td>
+         <td>$[[=row.expenses]]</td>
+         <td>$[[=row.income]]</td>
+         <td>
+            <a class="button has-background-warning" href="[[=URL('graph', row.id, signer=url_signer)]]">
+               <span class="icon"><i class="fa fa-pie-chart"></i></span> <span>Visualize Budget</span>
+            </a>
+         </td>
          <td>
             <a class="button" href="[[=URL('edit_budget', row.id, signer=url_signer)]]">
                <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Edit</span>
