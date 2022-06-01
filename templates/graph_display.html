@@ -15,37 +15,33 @@
     
     <p>[[=budget_name]]</p>
 
-    <p>[[=budget_id]]</p>
 
     <span v-if="display_mode == 'none'">
       <button @click="display_items('pie_chart')">Pie Chart</button>
       <button @click="display_items('column_chart')">Column Chart</button>
     </span>
+    <button v-if="display_mode == 'pie_chart'" @click="display_items('column_chart')">Column Chart</button>
+    <div class="columns">
+      <div class="column">
+        <div id="Income_pie_chart"></div>
+      </div>
+      <div class="column">
+        <div id='Expense_pie_chart'></div>
+      </div>
+      <!--<div id="table_div"></div> -->
 
-    <div>
-      <button v-if="display_mode == 'pie_chart'" @click="display_graph('column_chart')">Column Chart</button>
-      <div id="pie_chart"></div>
     </div>
-
-
-      <button v-if="display_mode == 'column_chart'" @click="display_graph('pie_chart')">Pie Chart</button>
+    <div class="column">
+      <button v-if="display_mode == 'column_chart'" @click="display_items('pie_chart')">Pie Chart</button>
       <div id="column_chart"></div>
- 
-      
-    <p>{{budgets}}</p><p>items: {{budget_items}}</p>{{budget_id}}
-    
-    <!--<div id="table_div"></div> -->
-
+    </div>
     <br>
-    <div>
     <a class="button" href="[[=URL('edit_budget', budget_id, signer=url_signer)]]">
         <span class="icon"><i class="fa fa-angle-left"></i></span>
         <span>Back</span>
     </a>
     </div>
  </div>
-  
-
 
 
 [[block page_scripts]]
@@ -54,7 +50,6 @@
     let my_callback_url = "[[=XML(my_callback_url)]]";
     let get_budgets_url = "[[=XML(get_budgets_url)]]";
     let get_budget_items_url = "[[=XML(get_budget_items_url)]]";
-    let display_items_url = "[[=XML(display_items_url)]]";
     let budget_id = "[[=(budget_id)]]"
 
 </script>

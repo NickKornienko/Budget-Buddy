@@ -56,16 +56,8 @@ def index(budget_id=None):
         budget_items=budget_items,
         get_budgets_url=URL('get_budgets', signer=url_signer),
         get_budget_items_url= URL('get_budget_items', signer=url_signer),
-        display_items_url=URL('display_items', signer=url_signer),
+        
     )
-
-
-action('display_items')
-@action.uses(url_signer.verify(), db)
-def get_budget_items():
-    budget_id = request.params.get(budget_id)
-    budget_items = db(db.budget_items.budget_id == budget_id).select().as_list()
-    return dict(budget_items=budget_items)
 
 
 
@@ -78,10 +70,10 @@ def get_images():
 
 
 @action('get_budget_items', method="POST")
-@action.uses(url_signer.verify, db)
+@action.uses(url_signer.verify(), db)
 def get_budget_items():
     budget_id = request.json.get('budget_id')
-    print(budget_id)
+
     budget_items=db(db.budget_items.budget_id==budget_id).select().as_list()
     return dict(budget_items=budget_items)
 

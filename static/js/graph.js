@@ -10,14 +10,12 @@ let init = (app) => {
     // This is the Vue data.
     app.data = {
         // Complete as you see fit.
-        data:[],
-        chart:[],
-        options:{},
+        In_pie_data:[],
+        Ex_pie_data:[],
         budgets:[],
         budget_items:[],
         budget_id:0,
-        columns_chart_table:[],
-        columns_chart:[],
+        columns_data:[],
         display_mode: 'none' // options right now should be 'pie_chart' or 'coloumn_chart'
     };
 
@@ -37,62 +35,75 @@ let init = (app) => {
     
     app.pieChart = function() {
         
-        
-        // Create our data table.
-        data = new google.visualization.DataTable();
-        data.addColumn('string', 'Topping');
-        data.addColumn('number', 'Slices');
-        data.addRows([
-          ['Mushrooms', 3],
-          ['Onions', 1],
-          ['Olives', 1],
-          ['Zucchini', 1],
-          ['Pepperoni', 2]
-        ]);
+        //creating data table for columns chart
+        let Indata = new google.visualization.DataTable();
+        let Exdata = new google.visualization.DataTable();
+        Indata.addColumn('string', 'Name');
+        Indata.addColumn('number', 'Amount');
+        Exdata.addColumn('string', 'Name');
+        Exdata.addColumn('number', 'Amount');
+        for (let i=0;i<app.vue.budget_items.length;i++){
+            let row = app.vue.budget_items[i];
+            if (row.type == "Expense") {
+                Exdata.addRow([row.name, row.amount]);
+            } else if (row.type == "Income"){
+                Indata.addRow([row.name, row.amount]);
+            }
+        }
 
+        app.vue.In_pie_data = Indata;
+        app.vue.Ex_pie_data = Exdata;
         // Set chart options
-        options = {
+        let Inoptions = {
+                        'title': 'Income',
                        'width':400,
                        'height':300};
 
+        let Exoptions = {
+                        'title':'Expense',
+                        'width':400,
+                        'height':300};
+
         // Instantiate and draw our chart, passing in some options.
-        chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
-        google.visualization.events.addListener(chart, 'select', app.selectHandler);
-        chart.draw(data, options);
+        let Inchart = new google.visualization.PieChart(document.getElementById('Income_pie_chart'));
+        google.visualization.events.addListener(Inchart, 'select', app.selectHandler);
+        Inchart.draw(app.vue.In_pie_data, Inoptions);
+
+        let Exchart = new google.visualization.PieChart(document.getElementById('Expense_pie_chart'));
+        google.visualization.events.addListener(Exchart, 'select', app.selectHandler);
+        Exchart.draw(app.vue.Ex_pie_data, Exoptions);
       };
     
     app.columnChart = function() {
         
-        columns_chart_table = google.visualization.arrayToDataTable([
-            ['Year', 'Sales', 'Expenses'],
-            ['2012',  900,      390],
-            ['2013',  -1000,      400],
-            ['2014',  -1170,      440],
-            ['2015',  1250,       480],
-            ['2016',  1530,      540]
-        ]);
-    
-        //app.vue.display_mode = "column_chart";
-        //columns_chart_table = new google.visualization.DataTable();
-        data.addColumn('string', 'Name');
-        data.addColumn('number', 'Amount');
-        
+        //creating data table for columns chart
+        let Cdata = new google.visualization.DataTable();
+        Cdata.addColumn('string', 'Name');
+        Cdata.addColumn('number', 'Amount');
+        Cdata.addColumn({role: "style"});
+        for (let i=0;i<app.vue.budget_items.length;i++){
+            let row = app.vue.budget_items[i];
+            if (row.type == "Expense") {
+                Cdata.addRow([row.name, 0-row.amount,'red']);
+            } else if (row.type == "Income"){
+                Cdata.addRow([row.name,row.amount,'green']);
+            }
+        }
+
+        app.vue.columns_data = Cdata;
         
         let options = {
             title: 'House',
-            isStacked:true	  
+            isStacked:false	  
         };  
 
         // Instantiate and draw the chart.
-        let Cchart = new google.visualization.ColumnChart(document.getElementById('column_chart'));
-        google.visualization.events.addListener(Cchart, 'select', app.selectHandler);
-        Cchart.draw(columns_chart_table, options);
+        let chart = new google.visualization.ColumnChart(document.getElementById('column_chart'));
+        google.visualization.events.addListener(chart, 'select', app.selectHandler);
+         chart.draw(app.vue.columns_data, options);
          
     }
 
-    app.display_graph=function(display_type){
-        app.vue.display_mode = display_type;
-    }
 
     app.display_items = function(display_type){
         app.vue.display_mode = display_type;
@@ -112,7 +123,6 @@ let init = (app) => {
         columnChart: app.columnChart,
         selectHandler: app.selectHandler,
         display_items: app.display_items,
-        display_graph: app.display_graph,
         //tableGraph: app.tableGraph,
         
     };
@@ -128,7 +138,6 @@ let init = (app) => {
     app.init = () => {
 
         axios.get(get_budgets_url).then(function (response) {
-            console.log(response)
             app.vue.budgets = app.enumerate(response.data.budgets);
         });
         app.vue.budget_id = budget_id
@@ -140,10 +149,10 @@ let init = (app) => {
             items = response.data.budget_items;
             app.enumerate(items);
             app.vue.budget_items = items;
+           
+            
         });
-        console.log(app.vue.budget_id);
-        //app.pieChart();
-        //app.column_chart();
+
        //app.tableGraph();
     };
 
