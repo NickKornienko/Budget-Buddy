@@ -19,6 +19,7 @@ let init = (app) => {
         budgets: [],
         budget_items: [],
         budget_id: 0,
+        budget_name:"",
         display_mode: 'none',
         render_pie: false,
         render_column: false
@@ -96,22 +97,40 @@ let init = (app) => {
         Cdata.addColumn('string', 'Name');
         Cdata.addColumn('number', 'Amount');
         Cdata.addColumn({ role: "style" });
+        let max = 0;
+        let min = 0;
         for (let i = 0; i < app.vue.budget_items.length; i++) {
             let row = app.vue.budget_items[i];
             if (row.type == "Expense") {
                 Cdata.addRow([row.name, 0 - row.amount, 'red']);
+                if ((0-row.amount) < min){
+                    min = 0-row.amount;
+                }
             } else if (row.type == "Income") {
                 Cdata.addRow([row.name, row.amount, 'green']);
+                if (row.amount > max) {
+                    max = row.amount;
+                }
             }
+            
         }
 
         app.vue.columns_data = Cdata;
 
         let options = {
-            title: 'House',
-            isStacked: false,
+            title: app.vue.budget_name +" Budget",
+            isStacked: true,
             'width': 1000,
-            'height': 800
+            'height': 800,
+            hAxis:{
+                title: "Items",
+            },
+            vAxis: {
+                title:"Amount",
+                maxValue: max,
+                minValue: min,
+            },
+            legend: {position: "none"},
         };
 
         // Instantiate and draw the chart.
@@ -158,8 +177,6 @@ let init = (app) => {
         ExselectHandler: app.ExselectHandler,
         CoselectHandler: app.CoselectHandler,
         display_items: app.display_items,
-        //tableGraph: app.tableGraph,
-
     };
 
     // This creates the Vue instance.
@@ -175,20 +192,17 @@ let init = (app) => {
         axios.get(get_budgets_url).then(function (response) {
             app.vue.budgets = app.enumerate(response.data.budgets);
         });
-        app.vue.budget_id = budget_id
-        console.log("before axios");
+        app.vue.budget_id = budget_id;
+
 
         axios.post(get_budget_items_url, { budget_id: app.vue.budget_id }).
             then(function (response) {
-                console.log("in axios call");
                 items = response.data.budget_items;
                 app.enumerate(items);
                 app.vue.budget_items = items;
-
-
+                app.vue.budget_name = response.data.budget_name;
             });
 
-        //app.tableGraph();
     };
 
     // Call to the initializer.
@@ -200,7 +214,6 @@ let init = (app) => {
 function start_app() {
     init(app);
 }
-//init(app);
 
 // Load the Visualization API and the piechart package.
 google.charts.load('current', { 'packages': ['corechart'] });

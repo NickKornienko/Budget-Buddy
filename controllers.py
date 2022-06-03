@@ -75,7 +75,8 @@ def get_budget_items():
     budget_id = request.json.get('budget_id')
 
     budget_items=db(db.budget_items.budget_id==budget_id).select().as_list()
-    return dict(budget_items=budget_items)
+    budget_name=db(db.budgets.id == budget_id).select()[0].name
+    return dict(budget_items=budget_items, budget_name=budget_name)
 
 
 @action('login')
