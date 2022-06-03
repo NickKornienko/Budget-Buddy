@@ -72,23 +72,21 @@ let init = (app) => {
         // Set chart options
         let Inoptions = {
             'title': 'Income',
-            'width': 400,
-            'height': 300
+            'width': 800,
+            'height': 600
         };
 
         let Exoptions = {
             'title': 'Expense',
-            'width': 400,
-            'height': 300
+            'width': 800,
+            'height': 600
         };
 
         // Instantiate and draw our chart, passing in some options.
         app.vue.in_chart = new google.visualization.PieChart(document.getElementById('Income_pie_chart'));
-        google.visualization.events.addListener(app.vue.in_chart, 'select', app.InselectHandler);
         app.vue.in_chart.draw(app.vue.In_pie_data, Inoptions);
 
         app.vue.ex_chart = new google.visualization.PieChart(document.getElementById('Expense_pie_chart'));
-        google.visualization.events.addListener(app.vue.ex_chart, 'select', app.ExselectHandler);
         app.vue.ex_chart.draw(app.vue.Ex_pie_data, Exoptions);
     };
 
@@ -111,12 +109,13 @@ let init = (app) => {
 
         let options = {
             title: 'House',
-            isStacked: false
+            isStacked: false,
+            'width': 1000,
+            'height': 800
         };
 
         // Instantiate and draw the chart.
         app.vue.co_chart = new google.visualization.ColumnChart(document.getElementById('column_chart'));
-        google.visualization.events.addListener(app.vue.co_chart, 'select', app.CoselectHandler);
         app.vue.co_chart.draw(app.vue.columns_data, options);
     }
 

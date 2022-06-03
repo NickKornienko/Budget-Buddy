@@ -9,9 +9,10 @@
 <div class="section" id="vue-target" v-cloak>
 
   <h1 class="title">Budget Buddy</h1>
-  <h2 class="subtitle">View budgets</h2>
 
-  <p>[[=budget_name]]</p>
+  <div class="block">
+    <h2 class="subtitle">Viewing budget: [[=budget_name]]</h2>
+  </div>
 
   <a class="button" href="[[=URL('edit_budget', budget_id, signer=url_signer)]]">
     <span class="icon"><i class="fa fa-angle-left"></i></span>
@@ -34,9 +35,9 @@
   </i>
 
   <div v-show="render_pie">
-    <div class="columns">
+    <div class="columns is-mobile">
 
-      <div class="column">
+      <div class="column is-mobile">
         <div id="Income_pie_chart"></div>
       </div>
 
