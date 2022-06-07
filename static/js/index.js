@@ -13,9 +13,12 @@ let init = (app) => {
         data:[],
         chart:[],
         options:{},
-        
+        query: "",
+        results: [],
     };
 
+
+    
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
         let k = 0;
@@ -55,15 +58,38 @@ let init = (app) => {
         chart.draw(data, options);
       }
 
+    app.search = function () {
+        if (app.vue.query.length > 1) {
+            axios.get(search_url, { params: { q: app.vue.query} })
+                .then(function (result) {
+                    app.vue.results = result.data.results;
+                });
+        }
+        else {
+            app.vue.results = [];
+        }
+    };
     
-    
+
+    app.go_to_budget = function () {
+        for (let i = 0; i < app.vue.results.length; i++) {
+            let b = app.vue.results[i];
+            axios.get(get_budget_url, {params: {budget_id: app.vue.results[i] } })
+                .then(function (r) {
+                    console.log("here");
+                    window.location = r.data.url;
+                });
+        }
+    };
+
     
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
         drawChart: app.drawChart,
         selectHandler: app.selectHandler,
-        
+        search: app.search,
+        go_to_budget: app.go_to_budget,
     };
 
     // This creates the Vue instance.

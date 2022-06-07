@@ -24,9 +24,12 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email
 from py4web.utils.form import Form, FormStyleBulma, FormStyleDefault, RadioWidget
 from pydal.validators import *
+import uuid
+import random
 
 url_signer = URLSigner(session)
 
+# budget_id = 0
 
 @action('index')
 @action.uses('display.html', db, auth.user, url_signer)
@@ -34,6 +37,8 @@ def index():
     rows = db(db.budgets.user_id == get_user_email()).select()
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
+        search_url = URL('search', signer=url_signer),
+        get_budget_url=URL('get_budget_url', signer=url_signer),
         rows=rows,
         url_signer=url_signer
     )
@@ -79,10 +84,6 @@ def get_budget_items():
     return dict(budget_items=budget_items, budget_name=budget_name)
 
 
-@action('login')
-@action.uses('login.html', auth, url_signer)
-def login():
-    return dict()
 
 
 @action('display')
@@ -90,6 +91,8 @@ def login():
 def display():
     return dict(
         my_callback_url=URL('my_callback', signer=url_signer),
+        search_url=URL('search', signer=url_signer),
+        get_budget_url=URL('get_budget_url', signer=url_signer),
         rows=db(db.budgets.user_id == get_user_email()).select(),
         url_signer=url_signer
     )
@@ -216,3 +219,37 @@ def delete_budget(budget_id=None, budget_item_id=None):
     assert budget_item_id is not None
     db(db.budget_items.id == budget_item_id).delete()
     redirect(URL(f'edit_budget/{budget_id}', signer=url_signer))
+
+
+@action('search')
+@action.uses()
+def search():
+    q = request.params.get('q')
+    budgets = db(db.budgets.name).select().as_list()
+    searchList = []
+    names = []
+    for budget in budgets:
+        if budget["name"] not in names:
+            searchList.append(budget)
+            names.append(budget["name"])
+    # results = [q + ":" + str(uuid.uuid1()) for _ in range(random.randint(2, 6))]
+    results = []
+    for item in searchList:
+        if q.upper() in item["name"].upper():
+            results.append(item["name"])
+    return dict(results=results)
+
+
+
+
+
+@action('get_budget_url')
+@action.uses(db, url_signer,url_signer.verify())
+def get_budget_url():
+    budget_name = request.params.get('budget_id')
+    for row in db(db.budgets).select():
+        if row.name == budget_name:
+            budget_id = row.id
+
+    return dict(url=URL(f'edit_budget/{budget_id}', signer=url_signer))
+
