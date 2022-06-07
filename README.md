@@ -4,7 +4,7 @@ Created by: Brian Liu, Edwin Wong, Brandon Bazile, Magdalena Ramirez, and Nick K
  
 This app was created to help individuals create interactive and visual budgets. Users begin by creating a new account or signing in to a current account. They can create different budgets, add different items to each budget that qualify at expenses or income and visualize the entire budget in a bar or pie graph. 
 
-#Installation & Use
+# Installation & Use
 
 1. This app uses py4web, bulma, and vue.js. Please make sure you have these installed.
 2. Clone the git repo into the apps folder of the main py4web folder.
