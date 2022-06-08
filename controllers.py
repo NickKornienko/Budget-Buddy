@@ -222,7 +222,7 @@ def delete_budget(budget_id=None, budget_item_id=None):
 
 
 @action('search')
-@action.uses()
+@action.uses(db, session,url_signer)
 def search():
     q = request.params.get('q')
     budgets = db(db.budgets.name).select().as_list()
@@ -237,7 +237,7 @@ def search():
     for item in searchList:
         if q.upper() in item["name"].upper():
             results.append(item["name"])
-    return dict(results=results)
+    return dict(results=results, signer=url_signer)
 
 
 

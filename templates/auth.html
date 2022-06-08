@@ -3,11 +3,17 @@
   <div class="hero-body">
     <div class="container has-text-centered">
       <div class="column is-4 is-offset-4">
+        [[if globals().get('user'):]]
+        <h3 class="title has-text-white">Edit Your Profile</h3>
+        <hr class="login-hr">
+        <br>
+        [[else:]]
         <h3 class="title has-text-white">Welcome to Budget Buddy</h3>
         <hr class="login-hr">
-        <p class="subtitle has-text-white">Please Sign in or Create an account to proceed</p>
+        <p class="subtitle has-text-white">Please sign in or create an ccount to proceed</p>
         <br>
       </div>
+      [[pass]]
       <div class="columns is-centered">
         <div class="box">
           <section class="section">
