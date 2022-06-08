@@ -222,7 +222,7 @@ def delete_budget(budget_id=None, budget_item_id=None):
 
 
 @action('search')
-@action.uses(db, session,url_signer)
+@action.uses(db,session,url_signer)
 def search():
     q = request.params.get('q')
     budgets = db(db.budgets.name).select().as_list()
