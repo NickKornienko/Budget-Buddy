@@ -29,7 +29,6 @@ import random
 
 url_signer = URLSigner(session)
 
-# budget_id = 0
 
 @action('index')
 @action.uses('display.html', db, auth.user, url_signer)
